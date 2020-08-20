@@ -3,6 +3,7 @@ import json
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import os
+import functools
 
 with open('districts.json', 'r', encoding='utf-8') as file:
     districts_json = json.load(file)
@@ -115,7 +116,7 @@ class Application(db.Model):
             "text": self.text,
         }
 
-
+@functools.lru_cache(maxsize=1)
 def get_data():
     for item in volunteers_json.values():
         volunteer = Volunteer(
@@ -146,8 +147,8 @@ def get_data():
     db.session.commit()
 
 
-if len(db.session.query(District).all()) == 0:
-    get_data()
+get_data()
+
 
 
 @app.route('/')
