@@ -116,6 +116,7 @@ class Application(db.Model):
             "text": self.text,
         }
 
+
 @functools.lru_cache(maxsize=1)
 def get_data():
     for item in volunteers_json.values():
@@ -147,8 +148,8 @@ def get_data():
     db.session.commit()
 
 
-get_data()
-
+if db.session.query(Volunteer).filter_by(id=1).first() == None:
+    get_data()
 
 
 @app.route('/')
@@ -204,15 +205,15 @@ def volunteers_def():
 def helpme():
     data = request.get_json()
     application = Application(
-                              district_id=int(data.get('district')),
-                              street_id=int(data.get('street')),
-                              volunteer_id=int(data.get('volunteer')),
-                              address=data.get('address'),
-                              name=data.get('name'),
-                              surname=data.get('surname'),
-                              phone=data.get('phone'),
-                              text=data.get('text')
-                        )
+        district_id=int(data.get('district')),
+        street_id=int(data.get('street')),
+        volunteer_id=int(data.get('volunteer')),
+        address=data.get('address'),
+        name=data.get('name'),
+        surname=data.get('surname'),
+        phone=data.get('phone'),
+        text=data.get('text')
+    )
     db.session.add(application)
     db.session.commit()
 
