@@ -3,7 +3,10 @@ import json
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import os
+import subprocess
 import functools
+from psycopg2.errorcodes import UNDEFINED_TABLE
+import psycopg2
 
 with open('districts.json', 'r', encoding='utf-8') as file:
     districts_json = json.load(file)
@@ -148,14 +151,23 @@ def get_data():
     db.session.commit()
 
 
-if db.session.query(Volunteer).filter_by(id=1).first() == None:
-    get_data()
-
+# if 'migrations' in os.listdir():
+#     # subprocess.Popen('flask db init')
+#     # subprocess.Popen('flask db migrate')
+#     # subprocess.Popen('flask db upgrade')
+#     get_data()
+#
+# if len(db.session.query(Street).all()) == 0:
+#     get_data()
 
 @app.route('/')
 def hello_world():
     return redirect('/districts/')
 
+@app.route('/get_data/')
+def getdata():
+    get_data()
+    return redirect('/districts/')
 
 @app.route('/districts/', methods=['GET'])
 def districts_func():
